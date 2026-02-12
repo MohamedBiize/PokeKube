@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/your-user/pokekube-backend:latest
+          image: ghcr.io/mohamedbiize/pokekube-backend:latest
           ports:
             - containerPort: 8000
           env:
