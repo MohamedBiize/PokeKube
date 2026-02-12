@@ -36,7 +36,7 @@ jobs:
         run: |
           python -m py_compile backend/main.py favorites-service/main.py gateway/main.py
 
-  build-and-deploy:
+    build-and-deploy:
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -80,25 +80,24 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_FRONTEND }}:${{ github.ref_name }},${{ env.IMAGE_FRONTEND }}:latest
 
+      # 🔥 Install kubectl
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
-        with:
-          version: 'latest'
 
-      - name: Configure kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
+      # 🔥 Start Minikube inside the runner
+      - name: Start Minikube
+        uses: medyagh/setup-minikube@latest
 
+      # 🔥 Deploy everything
       - name: Deploy to Kubernetes
+        run: kubectl apply -f deploy/
+
+      # 🔥 Wait for pods (very useful for CI stability)
+      - name: Wait for deployments
         run: |
-          kubectl apply -f deploy/configmap.yaml
-          kubectl apply -f deploy/secret.yaml
-          kubectl apply -f deploy/postgres-pv-pvc.yaml
-          kubectl apply -f deploy/postgres-deployment.yaml
-          kubectl apply -f deploy/backend-deployment.yaml
-          kubectl apply -f deploy/favorites-deployment.yaml
-          kubectl apply -f deploy/gateway-deployment.yaml
-          kubectl apply -f deploy/frontend-deployment.yaml
+          kubectl rollout status deployment/backend --timeout=120s
+          kubectl rollout status deployment/favorites --timeout=120s
+          kubectl rollout status deployment/gateway --timeout=120s
+          kubectl rollout status deployment/frontend --timeout=120s
+
 
