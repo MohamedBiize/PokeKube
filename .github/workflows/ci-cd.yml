@@ -36,7 +36,8 @@ jobs:
         run: |
           python -m py_compile backend/main.py favorites-service/main.py gateway/main.py
 
-    build-and-deploy:
+
+  build-and-deploy:
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -44,60 +45,4 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build & push backend
-        uses: docker/build-push-action@v6
-        with:
-          context: ./backend
-          push: true
-          tags: ${{ env.IMAGE_BACKEND }}:${{ github.ref_name }},${{ env.IMAGE_BACKEND }}:latest
-
-      - name: Build & push favorites-service
-        uses: docker/build-push-action@v6
-        with:
-          context: ./favorites-service
-          push: true
-          tags: ${{ env.IMAGE_FAVORITES }}:${{ github.ref_name }},${{ env.IMAGE_FAVORITES }}:latest
-
-      - name: Build & push gateway
-        uses: docker/build-push-action@v6
-        with:
-          context: ./gateway
-          push: true
-          tags: ${{ env.IMAGE_GATEWAY }}:${{ github.ref_name }},${{ env.IMAGE_GATEWAY }}:latest
-
-      - name: Build & push frontend
-        uses: docker/build-push-action@v6
-        with:
-          context: ./frontend
-          push: true
-          tags: ${{ env.IMAGE_FRONTEND }}:${{ github.ref_name }},${{ env.IMAGE_FRONTEND }}:latest
-
-      # 🔥 Install kubectl
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
-
-      # 🔥 Start Minikube inside the runner
-      - name: Start Minikube
-        uses: medyagh/setup-minikube@latest
-
-      # 🔥 Deploy everything
-      - name: Deploy to Kubernetes
-        run: kubectl apply -f deploy/
-
-      # 🔥 Wait for pods (very useful for CI stability)
-      - name: Wait for deployments
-        run: |
-          kubectl rollout status deployment/backend --timeout=120s
-          kubectl rollout status deployment/favorites --timeout=120s
-          kubectl rollout status deployment/gateway --timeout=120s
-          kubectl rollout status deployment/frontend --timeout=120s
-
-
+      ...
