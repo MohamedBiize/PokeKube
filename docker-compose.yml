@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: pokemon-db
+    environment:
+      POSTGRES_USER: pokemon
+      POSTGRES_PASSWORD: pokemon_password
+      POSTGRES_DB: pokemon_favorites
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    container_name: pokemon-backend
+    environment:
+      POKEAPI_BASE_URL: https://pokeapi.co/api/v2
+    depends_on:
+      - db
+
+  favorites-service:
+    build: ./favorites-service
+    container_name: pokemon-favorites
+    environment:
+      DATABASE_URL: postgresql://pokemon:pokemon_password@db:5432/pokemon_favorites
+    depends_on:
+      - db
+
+  gateway:
+    build: ./gateway
+    container_name: pokemon-gateway
+    environment:
+      BACKEND_URL: http://backend:8000
+      FAVORITES_URL: http://favorites-service:8001
+    depends_on:
+      - backend
+      - favorites-service
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: pokemon-frontend
+    depends_on:
+      - gateway
+    ports:
+      - "8080:80"
+
+volumes:
+  postgres_data:
+

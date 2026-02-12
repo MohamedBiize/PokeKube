@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pokekube-config
+data:
+  POKEAPI_BASE_URL: "https://pokeapi.co/api/v2"
+  BACKEND_URL: "http://backend-svc:8000"
+  FAVORITES_URL: "http://favorites-svc:8001"
+

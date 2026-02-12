@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: favorites
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: favorites
+  template:
+    metadata:
+      labels:
+        app: favorites
+    spec:
+      containers:
+        - name: favorites
+          image: ghcr.io/your-user/pokekube-favorites:latest
+          ports:
+            - containerPort: 8001
+          env:
+            - name: DATABASE_URL
+              value: postgresql://pokemon:pokemon_password@postgres-svc:5432/pokemon_favorites
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: favorites-svc
+spec:
+  selector:
+    app: favorites
+  ports:
+    - port: 8001
+      targetPort: 8001
+

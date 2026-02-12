@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway
+          image: ghcr.io/your-user/pokekube-gateway:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: BACKEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: pokekube-config
+                  key: BACKEND_URL
+            - name: FAVORITES_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: pokekube-config
+                  key: FAVORITES_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-svc
+spec:
+  type: NodePort
+  selector:
+    app: gateway
+  ports:
+    - port: 8000
+      targetPort: 8000
+      nodePort: 30080
+
