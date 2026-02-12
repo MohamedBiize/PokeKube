@@ -4,20 +4,19 @@ on:
   push:
     branches:
       - develop
-  tag:
-    types:
-      - created
+    tags:
+      - "v*"
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_BACKEND: ghcr.io/your-user/pokekube-backend
-  IMAGE_FAVORITES: ghcr.io/your-user/pokekube-favorites
-  IMAGE_GATEWAY: ghcr.io/your-user/pokekube-gateway
-  IMAGE_FRONTEND: ghcr.io/your-user/pokekube-frontend
+  IMAGE_BACKEND: ghcr.io/MohamedBiize/pokekube-backend
+  IMAGE_FAVORITES: ghcr.io/MohamedBiize/pokekube-favorites
+  IMAGE_GATEWAY: ghcr.io/MohamedBiize/pokekube-gateway
+  IMAGE_FRONTEND: ghcr.io/MohamedBiize/pokekube-frontend
 
 jobs:
   build-and-test:
-    if: github.ref_type == 'branch'
+    if: startsWith(github.ref, 'refs/heads/develop')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,7 +37,7 @@ jobs:
           python -m py_compile backend/main.py favorites-service/main.py gateway/main.py
 
   build-and-deploy:
-    if: github.ref_type == 'tag'
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
       contents: read

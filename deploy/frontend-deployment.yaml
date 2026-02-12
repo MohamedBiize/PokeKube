@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/your-user/pokekube-frontend:latest
+          image: ghcr.io/MohamedBiize/pokekube-frontend:latest
           ports:
             - containerPort: 80
 ---
