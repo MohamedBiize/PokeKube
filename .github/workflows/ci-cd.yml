@@ -9,10 +9,10 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_BACKEND: ghcr.io/MohamedBiize/pokekube-backend
-  IMAGE_FAVORITES: ghcr.io/MohamedBiize/pokekube-favorites
-  IMAGE_GATEWAY: ghcr.io/MohamedBiize/pokekube-gateway
-  IMAGE_FRONTEND: ghcr.io/MohamedBiize/pokekube-frontend
+  IMAGE_BACKEND: ghcr.io/mohamedbiize/pokekube-backend
+  IMAGE_FAVORITES: ghcr.io/mohamedbiize/pokekube-favorites
+  IMAGE_GATEWAY: ghcr.io/mohamedbiize/pokekube-gateway
+  IMAGE_FRONTEND: ghcr.io/mohamedbiize/pokekube-frontend
 
 jobs:
   build-and-test:
